@@ -21,6 +21,8 @@
     <input type="password" id="password" name="password" />
 
     <button type="submit">Login</button>
+
+    <a href="{{ url('/auth/login') }}">Login with keycloak</a>
   </form>
 
 </div>

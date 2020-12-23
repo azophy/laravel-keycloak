@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +21,20 @@ Route::get('/', function () {
 
 Route::get('/login', 'LoginController@form')->name('login');
 Route::post('/login', 'LoginController@authenticate');
+
+Route::get('/auth/login', function () {
+    return Socialite::driver('keycloak')->redirect();
+});
+
+Route::get('/auth/callback', function () {
+    $keycloakUser = Socialite::driver('keycloak')->user();
+
+    $user = \App\User::where(['email' => $keycloakUser->email ])->first();
+
+    if ($user == null) abort(401); else {
+        Auth::login($user);
+    }
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/logout', 'LoginController@logout');
